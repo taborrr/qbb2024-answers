@@ -64,6 +64,18 @@ ggplot(data=RNA_seq_subset_df,
 ## spinal cord tissue may simply create highly stabilized
 ## long lasting RNAs in order for this suborgan to function.
 
+#Q6 Correction
+ggplot(data=RNA_seq_subset_df, 
+       mapping = aes(x = SMRIN)) +
+  geom_boxplot() +
+  facet_wrap("SMTSD") +
+  xlab("RNA Integrity Number") +
+  ylab("Count") +
+  ggtitle("Relationship between RIN and their Counts stratified by Tissues")
+## faceting the distribution by tissue allows much clearer visualization
+## providing clear assessment of how cell culture is a massive outlier
+## with very minimal degredation of RNA (roughly at RIN= 10) compared with
+## other tissues averaging around RIN= 6-7 range. 
 
 #Q7
 ggplot(data=RNA_seq_subset_df, 
@@ -91,7 +103,19 @@ ggplot(data=RNA_seq_subset_df,
 ## explains why the testis in the graph have a decent number of 
 ## samples with a higher number of genes detected above 30,000.
 
-
+#Q7 Correction
+ggplot(data=RNA_seq_subset_df, 
+       mapping = aes(x = SMGNSDTC)) +
+  geom_density() +
+  xlab("Genes Detected") +
+  ylab("Density Distribution") +
+  ggtitle("Relationship between Genes Detected within various Tissues") +
+  facet_wrap("SMTSD") + 
+  theme(legend.position = "none")
+## a density plot is most useful for viewing this type of data
+## because it simplifies what needs to be seen and compared 
+## between the tissues, ignoring unnecessary colors that 
+## would actually take away from comparison. 
 
 #Q8
 ggplot(data=RNA_seq_subset_df, 
