@@ -2,7 +2,6 @@
 # 2024 09 03
 # Tabor Roderiques
 
-
 #libraries
 library(tidyverse)
 
@@ -123,13 +122,3 @@ ggplot(data=RNA_seq_subset_df,
 ## cultures, and now adipose tissue. This suggests these tissue
 ## types are not strongly autolytic upon tissue extraction. This
 ## makes intuitive sense with the nervous system and cell cultures.
-
-
-
-
-
-
-
-
-
-
