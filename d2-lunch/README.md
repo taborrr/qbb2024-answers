@@ -55,6 +55,24 @@
 - 83 chr14 *can compare*
 - there is a noticable similarity in IG and pseudogenes counts on the same chromosomes. so not only do the same chromosomes appear with IG and psdo genes but their abundance is also equivalent on each chromosome
 
+## Answer 2
+## Why is grep pseudogene gene.gtf not an effective way to identify lines where the gene_type key-value pair is a pseudogene (hint: look for overlaps_pseudogene)? What would be a better pattern? Describe it in words if you are having trouble with the regular expression.
+
+- this search term although will successfully identify istances of "pseudogene", it will fail to only identify and filter for whole-term instances of "pseudogene" and will include other terms where "pseudogene" exists within them like "unprocessed_pseudogene" and "overlaps_pseudogene". 
+- for a better pattern, use
+- `grep "IG_._pseudogene" gene.gtf`
+- no issues were encountered, but to help organize the results, you could include `| sort -k 1` to see any chromosomal patterns more clearly
+
+## Answer 3
+## Convert the annotation from .gtf format to .bed format. Specifically, print out just the chromosome, start, stop, and gene_name. As cut splits lines into fields based on the tab character, first use sed to create a new file where spaces are replaced with tabs.
+- `sed "s/ /\t/g" gene.gtf > gene-tabs.gtf`
+- `cut -f 1,4,5,10 gene-tabs.gtf > gene-tabs.bed`
+- `head gene-tabs.bed`
+
+
+
+
+
 
 
 
