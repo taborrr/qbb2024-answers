@@ -3,10 +3,10 @@
 import sys
 
 # to use this basic grep program run in the directory with this .py file:
-# ./grep.py <file to grep> <grep word>
+# ./grep.py <grep word> <file to grep> 
 
-file = open( sys.argv[1] )
-grep = sys.argv[2]
+file = open( sys.argv[2] )
+grep = sys.argv[1]
 
 
 for line in file:
