@@ -30,6 +30,30 @@
 
 # GENCODE Questions
 ## Answer 1
+### Immunoglobin (Ig) genes are present in over 200 copies throughout the human genome. How many IG genes (not pseudogenes) are present on each chromosome? You can use a dot (.) in a regular expression pattern to match any single character. How does this compare with the distribution of IG pseudogenes?
+- `grep "IG_._gene" gene.gtf | wc -l`
+- there are 214 instances of IG genes
+- `grep "IG_._gene" gene.gtf | sort -k 1 | cut -f 1 | uniq -c`
+- these chromosomes have a specified number of IG Genes listed below
+- chr21 has 1
+- chr16 has 6
+- chr15 has 16 
+- chr22 has 48
+- chr2 has 52
+- chr14 has 91
+- `grep "IG_._pseudogene" gene.gtf | sort -k 1 | cut -f 1 | uniq -c | sort -k 1`
+- the pseudogene of IG gene counts on the specified chromosome are listed below
+- 1 chr1
+- 1 chr10
+- 1 chr18
+- 1 chr8
+- 5 chr9
+- 6 chr15 *can compare*
+- 8 chr16 *can compare*
+- 45 chr2 *can compare*
+- 48 chr22 *can compare*
+- 83 chr14 *can compare*
+- there is a noticable similarity in IG and pseudogenes counts on the same chromosomes. so not only do the same chromosomes appear with IG and psdo genes but their abundance is also equivalent on each chromosome
 
 
 
