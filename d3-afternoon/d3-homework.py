@@ -97,3 +97,10 @@ print("Question 8")
 ## dif of 1000x or more
 #print(diff_array[numpy.where(diff_array >= 10)])
 print(numpy.sum(diff_array >= 10), "count of significantly differentially expressed genes")
+## there are 33 genes identified whose difference between the highest and second highest tissue expression is greater than 10
+
+# print("\n")
+# print("Advanced Question 9")
+# ## Advanced Answer 9
+# zero_mimic = numpy.zeros(log2_xpr)
+# numpy.argmax(log2_xpr)
