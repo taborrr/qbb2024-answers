@@ -1,6 +1,6 @@
 # Day 4 homework
 
-library(tidyverse)
+library(tidyverse) 
 library(broom)
 
 # exercise 1
