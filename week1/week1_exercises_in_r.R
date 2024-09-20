@@ -46,7 +46,6 @@ distPlotter <- function(file, cov) {
     theme(legend.position = c(0.85,0.85),
           panel.background = element_blank(),
           panel.border = element_rect(fill=NA))
-  print(sum(file$coverage == 0))
   OxCov <- ((sum(file$coverage == 0) / gsize) * 100)
   print(c(OxCov, "% of genome has not been sequenced, 0x coverage"))
   print(c(((pois[1]/ gsize) * 100), "% of genome pois estimated would have 0x coverage"))
@@ -61,19 +60,11 @@ distPlotter <- function(file, cov) {
 plot1 <- distPlotter(c3x,3)
 plot1
 
-## step 1.4
-## how much of genome not covered
-print(sum(genome_coverage$coverage == 0))
-OxCovVal <- ((sum(genome_coverage$coverage == 0) / 1000000) * 100)
-print(c(OxCovVal, "% of genome has not been sequenced, 0x coverage"))
 
-
-
-plot1 <- distPlotter(c3x,3)
-plot1
-
+# step 1.5
 plot2 <- distPlotter(c10x,10)
 plot2
 
+# step 1.6
 plot3 <- distPlotter(c30x, 30)
 plot3
