@@ -38,7 +38,17 @@ Poisson expectations were that 0.000000000009% of the genome would not be sequen
 The normal distribution is even better than 10x. The normal's curve is slightly right shfited still compared to the actual histogram but by a much smaller margin than in the previous coverages. This demonstrates that the greater the genome coverage (3x, 10x, 30x) the more congruent the normal, poisson, and the actual data align. 
 
 
+# exercise 2: de bruijn graph construction
+# step 2.4
+conda activate graphviz
+dot -Tpng edges.dot > ex2_digraph.png
+dot -Tpng kmer_edges.dot > ex2_digraph_allReads.png
+
+# step 2.5
+Using the shortened reads list of 6 reads and 14 edges from the ex2_digraph.png graph, you can remarkably trace over each node just once except for the "ATT" node which has three occurrences, to achieve the following genome sequened:
+TCTTATTGATTCATTT
 
 # step 2.6
-
-TCTTATTGATTCATTT
+## in a few sentences, what would it take to accurately reconstruct the sequence of the genome?
+Recreating a whole genome sequence using a de Bruijn graph will require very good quality DNA-seq reads without any sequencing errors. As we saw in exercise 1, these reads mut have entire coverage of the genome, such that no position of the genome is left uncovered and unsequenced. This is so that the de bruijn graph has the possibility to fully cycle through every edge and not have two dead end nodes.
+Also, the reads must have some overlap or else the graph would not be continuous and thus would have missing edges and floating nodes. Lastly, the genome idealitsically should have very minimal repeat regions, or to combat that the reads could be very, very long to avoid a greedy approach that suggests a shorter genome than the true sequence length.
