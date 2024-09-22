@@ -26,5 +26,5 @@ ggplot(data = df, mapping = aes(x = MAF, y = log2Enrichment, color = Feature)) +
   theme_minimal() +
   labs(title = "SNP Enrichment across MAF Levels for Different Genomic Features", 
        x = "Minor Allele Frequency", 
-       y = "Log2 Normalized Enrichment)")
+       y = "Log2 Normalized Enrichment")
   
