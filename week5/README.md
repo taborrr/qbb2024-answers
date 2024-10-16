@@ -17,7 +17,7 @@ Enzymes that break down proteins rely on the catalytic triad pocket of serine pr
 # If you were to reject any samples with the percentage of unique reads less than 45%, how many samples would you keep?
 Based on both FastQC of the raw and trimmed reads, every single sample (and every paired-end read) is at or below 35% unique reads, let alone 45% unique reads. All the samples would not be kept with this threshold. 
 # Can you see the blocks of triplicates clearly? Try adjusting the min slider up. Does this suggest anything about consistency between replicates?
-It took a second to understand, yet now I clearly distinguish the sample triplicates listed in order on the diagonal of the graph showing close similarity amongst every three samples, sometimes every six samples. Some triplicates are clearly than others, with the lower left quartile samples being the least consistent. On the whole, there is decent consistency between samples, with over half the depicted triplicates remarkably uniform in similarity based on differential expression analysis comparisons.
+It took a second to understand, yet now I clearly distinguish the sample triplicates listed in order on the diagonal of the graph showing close similarity amongst every three samples, sometimes every six samples. Some triplicates are clearly than others, with the lower left quartile samples being the least consistent. On the whole, there is decent consistency between samples, with over half the depicted triplicates remarkably uniform in similarity based on differential expression analysis comparisons. What we can observe in this graph is a mostly clear 3x3 squares along the diagonal.
 
 
 
