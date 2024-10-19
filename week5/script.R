@@ -1,4 +1,4 @@
-# Week 5 R script
+# week 5 R script
 # Tabor Roderiques
 
 # Exercise 3
@@ -70,7 +70,6 @@ ggplot(pca_data, aes(PC1, PC2, color=tissue, shape=rep)) +
   theme_minimal() +
   ggtitle("PCA Plot of RNA-Seq data from replicate samples throughout the Drosophila midgut")
 
-
 # restore the correct column names after mislabeling
 colnames(narrow)[colnames(narrow) == "Fe_Rep1"] <- "Temp_Name"
 colnames(narrow)[colnames(narrow) == "LFC-Fe_Rep3"] <- "Fe_Rep1"
@@ -103,80 +102,5 @@ heatmap(matNarrow, Rowv=NA, Colv=NA, RowSideColors=RColorBrewer::brewer.pal(12, 
 # Step 3.6
 # gene ontology and enrichment analysis
 genes = rownames(matNarrow[k==1,])
-
+# save as txt to current working directory (week5/)
 write.table(genes, 'cluster1.txt', sep="\n", quote=FALSE, row.names=FALSE, col.names=FALSE)
-
-
-
-
-
-
-######## paused here
-
-
-# log transform of data
-logNarrow = normTransform(ddsNarrow)
-
-# look at log mean by variance
-meanSdPlot(assay(logNarrow))
-
-# Apply VST, variance stabilizing transform to improve variance explantion visualizatino
-vstNarrow = vst(ddsNarrow)
-meanSdPlot(assay(vstBroad))
-
-
-# Perform PCA
-logPCAdata = plotPCA(logBroad, intgroup=c('rep', 'tissue'), returnData=TRUE)
-ggplot(logPCAdata, aes(PC1, PC2, color=tissue, shape=rep)) +
-  geom_point(size=5)
-
-# Perform PCA
-vstPCAdata = plotPCA(vstBroad, intgroup=c('rep', 'tissue'), returnData=TRUE)
-ggplot(vstPCAdata, aes(PC1, PC2, color=tissue, shape=rep)) +
-  geom_point(size=5)
-
-
-matBroad = as.matrix(assay(vstBroad))
-combined = matBroad[,seq(1,9,3)]
-combined = combined + matBroad[,seq(2,9,3)]
-combined = combined + matBroad[,seq(3,9,3)]
-combined = combined / 3
-
-filt = rowSds(combined) > 1
-sum(filt)
-
-matBroad = matBroad[filt,]
-
-# we dont want hierarchical agglomeric clustering
-heatmap(matBroad)
-
-heatmap(matBroad, Colv=NA)
-
-
-# k-mean
-set.seed(42)
-k = kmeans(matBroad, centers=12)$cluster
-# reorder data to bring memebrs of a clusters into their same cluster
-ordering = order(k)
-k = k[ordering]
-matBroad = matBroad[ordering,]
-heatmap(matBroad, Rowv=NA, Colv=NA, RowSideColors=RColorBrewer::brewer.pal(12, "Paired")[k])
-
-genes = rownames(matBroad[k==2,])
-
-write.table(genes,'cluster2.txt',sep="\n",quote=FALSE,row.names=FALSE,col.names=FALSE)
-
-# go to terminal and output gene names
-# go to homework assingment, open link for PANTHER
-# insert genes into panther
-# biological function
-# molecular analysis
-# 
-
-
-
-
-
-
-
-
