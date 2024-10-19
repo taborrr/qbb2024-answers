@@ -19,9 +19,12 @@ Based on both FastQC of the raw and trimmed reads, every single sample (and ever
 # Can you see the blocks of triplicates clearly? Try adjusting the min slider up. Does this suggest anything about consistency between replicates?
 It took a second to understand, yet now I clearly distinguish the sample triplicates listed in order on the diagonal of the graph showing close similarity amongst every three samples, sometimes every six samples. Some triplicates are clearly than others, with the lower left quartile samples being the least consistent. On the whole, there is decent consistency between samples, with over half the depicted triplicates remarkably uniform in similarity based on differential expression analysis comparisons. What we can observe in this graph is a mostly clear 3x3 squares along the diagonal.
 
-# Exercise 3
 
+# Exercise 3
 # Step 3.3
 # Examine the PCA plot. Does everything look okay (We wouldn’t ask if it did)? What does the PCA plot suggest to you about the data? Why?
 Given that clustering on the whole is ideal in the PCA, there are no major issues. One smaller issue is that Fe_Rep1 and LFC_Fe_Rep3 PCA (X,Y) coordinates are seemingly switched between each other, with Fe_Rep1 nicely clustering with two of the LFC_Fe replicates and the LFC_Fe_Rep3 clustering well with two of the Fe replicates. This suggests the data was unintentionally misannotated during sample experimentation, perhaps mixing up these two sample replicate stickers. These two samples in the experiment are adjacent each other as seen in the intial column names of the data. 
 
+# Step 3.6
+# Do the categories of enrichments make sense? Why?
+With a grand total of one category, relevantly called proteolysis, it is sensible for Panther's GO output of Drosophila midgut DE genes to list proteolysis. Proteolysis is a molecular digestive mechanism to break down proteins through hydrolysis which occurs extensively in the GI track. 
