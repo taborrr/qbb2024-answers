@@ -43,9 +43,21 @@ vsd <- vst(dds)
 
 # apply and plot principal components
 plotPCA(vsd, intgroup = "SEX")
-plotPCA(vsd, intgroup = "AGE")
-plotPCA(vsd, intgroup = "DTHHRDY")
-plotPCA(vsd, intgroup = c("SEX", "DTHHRDY"))
+pca_plotage <- plotPCA(vsd, intgroup = "AGE")
+pca_plotage + 
+  labs(color = "AGE Brackets") +
+  theme_minimal() +                       
+  theme(panel.border = element_blank()) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50")
+pca_plotd <- plotPCA(vsd, intgroup = "DTHHRDY")
+pca_plotd +
+  labs(color = "Death Cause") +
+  theme_minimal() +                       
+  theme(panel.border = element_blank()) +
+  geom_vline(xintercept = 0, linetype = "dashed", color = "gray50") +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50")
+
 # What proportion of variance in the gene expression data is explained by 
 # each of the first two principal components? Which principal components appear 
 # to be associated with which subject-level variables? Interpret these patterns 
