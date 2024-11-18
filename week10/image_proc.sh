@@ -186,15 +186,22 @@ plt.imshow(label_copy)
 plt.show()
 
 # # Filter cells
-sizes = np.bincount(labels.ravel())
-print(sizes)
-for i in range(sizes.shape[0]):
-    if sizes[i] < 100:
-        labels[np.where(labels == i)] = 0
+for labels in lab_array:
+    sizes = np.bincount(labels.ravel())
+    for i in range(1, np.amax(labels)+1):
+        where = np.where(labels == i)
+        if sizes[i] < 100:
+            labels[where] = 0
 
-def filter_by_size(labels, minsize, maxsize):
+def filter_by_size(labels):
     # Find label sizes
     sizes = np.bincount(labels.ravel())
+    # Calculate mean and standard deviation of sizes for non-zero labels
+    non_zero_sizes = sizes[1:]  # Skip the background (label 0)
+    mean_size = np.mean(non_zero_sizes)
+    std_size = np.std(non_zero_sizes)
+    minsize = mean_size - std_size
+    maxsize = mean_size + std_size
     # Iterate through labels, skipping background
     for i in range(1, sizes.shape[0]):
         # If the number of pixels falls outsize the cutoff range, relabel as background
@@ -209,11 +216,13 @@ def filter_by_size(labels, minsize, maxsize):
         labels[np.where(labels == j)] = i
     return labels
 
-# Let's look at the labels after filtering
-label_copy = np.copy(labels)
-label_copy[np.where(label_copy == 0)] -= 50
-plt.imshow(label_copy)
+for labels in lab_array:
+    labels = filter_by_size(labels)
+
+plt.imshow(lab_array[0])
 plt.show()
+
+################ completed exercise 2
 
 # What if we want to select a single marked nucleus?
 marked = np.copy(mask).astype(np.int32)
