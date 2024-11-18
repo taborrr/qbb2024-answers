@@ -54,6 +54,7 @@ plt.imshow(image_arrays[0])
 
 # Create a list to store the binary masks
 binary_masks = []
+labels_array = []
 # Iterate over the image arrays to create binary masks from the DAPI channel
 for image in image_arrays:
     # Extract the DAPI channel (first channel)
@@ -167,7 +168,17 @@ def find_labels(mask):
         labels[np.where(labels == j)] = i
     return labels
 
-labels = find_labels(mask)
+lab_array = []
+# Iterate over the masks arrays to create labels for each nuclei of a DAPI img
+for mask in binary_masks:
+    # Run the function
+    labels = find_labels(mask)
+    # Append the label to the array
+    lab_array.append(labels)
+
+plt.imshow(lab_array[0])
+plt.show()
+
 # Since the first label is 1 and the background is 0, let's adjust the background for more contrast
 label_copy = np.copy(labels)
 label_copy[np.where(label_copy == 0)] -= 50
