@@ -54,7 +54,6 @@ plt.imshow(image_arrays[0])
 
 # Create a list to store the binary masks
 binary_masks = []
-labels_array = []
 # Iterate over the image arrays to create binary masks from the DAPI channel
 for image in image_arrays:
     # Extract the DAPI channel (first channel)
@@ -224,14 +223,55 @@ plt.show()
 
 ################ completed exercise 2
 
+# exercise 3
+#############
+# # # # pseudocode # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# for each image set, find number of nuclei and their pixel positions from label-where           #
+# find mean nuclear signal of pcna and rna for each nuclei then the log2 ratio for that img set  #
+# save # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# how would i combine two different images of the same gene knockout condition? 
+# does this mean to append the field 0 nuclear signals for each pcna or rna to the field 0 values?
+# so bascially ignore the fact that there were fields, treat both fields as one big image
+################################
+################################
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+# Create a subplot with 1 row and 2 columns
+fig = make_subplots(rows=1, cols=2, subplot_titles=["Image 1", "Image 2"])
+# Add the first image
+fig.add_trace(go.Image(z=image_arrays[0]), row=1, col=1)
+# Add the second image
+fig.add_trace(go.Image(z=image_arrays[1]), row=1, col=2)
+# Update layout for better appearance
+fig.update_layout(height=600, width=1200, title="Side-by-Side Images")
+# Show the figure
+fig.show()
+#### evidence each field are different images with different nuclei counts
+################################
+################################
+##########################
+##########################
+for i in range(image_arrays):
+    num_nuc = numpy.amax(lab_array) + 1
+    for nu in range(num_nuc):
+        where = np.where(labels == nu)
+        for c in range(1,3):
+            fig = image_arrays[i][c]
+            pcna_signal = np.mean(fig[where])
+            rna_signal = np.mean(fig[where])
+            nuc_log2_raysh = np.log2(rna_signal / pca_signal)
+##########################
+##########################
 # What if we want to select a single marked nucleus?
 marked = np.copy(mask).astype(np.int32)
 where = np.where(labels == 50)
 marked[where] = 2
-
+for i in range(1,3):
+    print(i)
 # And if we want information about that nucleus in another channel?
-minv = np.amin(img1[where])
-maxv = np.amax(img1[where])
+nuc_pcna_signal_mean = np.mean(img1[where])
+nuc_rna_signal_mean = np.mean(img1[where])
 print(f"RNA nuclear signal ranges from {minv} to {maxv}")
 
 # Now let's see what a kernel is and what it does
