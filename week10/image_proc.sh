@@ -1,60 +1,71 @@
 #!/usr/bin/env python
 
-import numpy
+import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 import imageio
 import plotly.express as px
 import plotly
 
-na = numpy.newaxis
+na = np.newaxis
 
-# Load image into a numpy 2D array and rescale
-img = imageio.v3.imread("illum_DAPI.tif").astype(numpy.float32)
-img -= numpy.amin(img)
-img /= numpy.amax(img)
+# List of all .tif files
+tif_files = [
+    "APEX1_field0_DAPI.tif", "APEX1_field0_PCNA.tif", "APEX1_field0_nascentRNA.tif",
+    "APEX1_field1_DAPI.tif", "APEX1_field1_PCNA.tif", "APEX1_field1_nascentRNA.tif",
+    "PIM2_field0_DAPI.tif", "PIM2_field0_PCNA.tif", "PIM2_field0_nascentRNA.tif",
+    "PIM2_field1_DAPI.tif", "PIM2_field1_PCNA.tif", "PIM2_field1_nascentRNA.tif",
+    "POLR2B_field0_DAPI.tif", "POLR2B_field0_PCNA.tif", "POLR2B_field0_nascentRNA.tif",
+    "POLR2B_field1_DAPI.tif", "POLR2B_field1_PCNA.tif", "POLR2B_field1_nascentRNA.tif",
+    "SRSF1_field0_DAPI.tif", "SRSF1_field0_PCNA.tif", "SRSF1_field0_nascentRNA.tif",
+    "SRSF1_field1_DAPI.tif", "SRSF1_field1_PCNA.tif", "SRSF1_field1_nascentRNA.tif"
+    ]
+genes = ["APEX1", "PIM2", "POLR2B", "SRSF1"] 
+fields = [0, 1]
+channels = ["DAPI", "PCNA", "nascentRNA"]
 
-img1 = imageio.v3.imread("illum_RNAcytoNuc.tif").astype(numpy.float32)
-img1 -= numpy.amin(img1)
-img1 /= numpy.amax(img1)
-
-img2 = imageio.v3.imread("illum_Mito.tif").astype(numpy.float32)
-img2 -= numpy.amin(img2)
-img2 /= numpy.amax(img2)
-
-
-# Load 3 channels into single image array
-rgbimg = numpy.zeros((img.shape[0], img.shape[1], 3), numpy.uint16)
-for i, name in enumerate(['DAPI', 'RNAcytoNuc', 'Mito']):
-    rgbimg[:, :, i] = imageio.v3.imread(f"illum_{name}.tif")
+# Create the 8 (X, Y, 3) arrays
+image_arrays = []
+# Iterate through genes and fields
+for gene in genes:
+    for field in fields:
+        # Initialize an array for combining 3 channels
+        rgb_img = None
+        # Read all channels for the current gene and field
+        for i, channel in enumerate(channels):
+            # Construct filename
+            filename = f"{gene}_field{field}_{channel}.tif"
+            if filename not in tif_files:
+                raise ValueError(f"File {filename} not found!")
+            # Load the channel
+            img = imageio.v3.imread(filename).astype(np.uint16)
+            # Initialize rgb_img
+            if rgb_img is None:
+                rgb_img = np.zeros((img.shape[0], img.shape[1], 3), dtype=np.uint16)
+            # Add the channel
+            rgb_img[:, :, i] = img
+        # Append the combined image to the list
+        image_arrays.append(rgb_img)
+# Now `image_arrays` contains 8 arrays of shape (X, Y, 3), one for each gene/field
+print(f"Processed {len(image_arrays)} images with shape {image_arrays[0].shape}")
 
 # Display image
-plt.imshow(rgbimg)
+plt.imshow(image_arrays[0])
 
-# Oops, got a warning.
-# Convert values from uint16 to uint8
-rgbimg = (rgbimg // 2**8).astype(numpy.uint8)
+# Create a list to store the binary masks
+binary_masks = []
+# Iterate over the image arrays to create binary masks from the DAPI channel
+for image in image_arrays:
+    # Extract the DAPI channel (first channel)
+    dapi_channel = image[:, :, 0].astype(np.float32)
+    # Calculate the mean value of the DAPI channel
+    mean_value = np.mean(dapi_channel)
+    # Create the binary mask using the mean as the cutoff
+    mask = dapi_channel >= mean_value
+    # Append the mask to the list
+    binary_masks.append(mask)
 
-# Display image
-plt.imshow(rgbimg)
-plt.show()
-
-# Too dim because there is no automatic color scaling
-# Maximize range for each color
-for i in range(3):
-    minv = numpy.amin(rgbimg[:, :, i])
-    maxv = numpy.amax(rgbimg[:, :, i])
-    newimg = (rgbimg[:, :, i] - minv) / (maxv - minv)
-    newimg = numpy.round(newimg * 240).astype(numpy.uint8)
-    rgbimg[:, :, i] = newimg
-
-# Display image
-fig = px.imshow(rgbimg, facet_col=2)
-fig.show()
-
-# Let's look at creating a masking image
-mask = img > 0.1
-plt.imshow(mask)
+plt.imshow(binary_masks[0])
 plt.show()
 
 # Let's use a function to find nuclei bodies
@@ -62,7 +73,7 @@ def find_labels(mask):
     # Set initial label
     l = 0
     # Create array to hold labels
-    labels = numpy.zeros(mask.shape, numpy.int32)
+    labels = np.zeros(mask.shape, np.int32)
     # Create list to keep track of label associations
     equivalence = [0]
     # Check upper-left corner
@@ -144,96 +155,96 @@ def find_labels(mask):
                 l += 1
                 equivalence.append(l)
                 labels[x, -1] = l
-    equivalence = numpy.array(equivalence)
+    equivalence = np.array(equivalence)
     # Go backwards through all labels
     for i in range(1, len(equivalence))[::-1]:
         # Convert labels to the lowest value in the set associated with a single object
-        labels[numpy.where(labels == i)] = equivalence[i]
+        labels[np.where(labels == i)] = equivalence[i]
     # Get set of unique labels
-    ulabels = numpy.unique(labels)
+    ulabels = np.unique(labels)
     for i, j in enumerate(ulabels):
         # Relabel so labels span 1 to # of labels
-        labels[numpy.where(labels == j)] = i
+        labels[np.where(labels == j)] = i
     return labels
 
 labels = find_labels(mask)
 # Since the first label is 1 and the background is 0, let's adjust the background for more contrast
-label_copy = numpy.copy(labels)
-label_copy[numpy.where(label_copy == 0)] -= 50
+label_copy = np.copy(labels)
+label_copy[np.where(label_copy == 0)] -= 50
 plt.imshow(label_copy)
 plt.show()
 
 # # Filter cells
-sizes = numpy.bincount(labels.ravel())
+sizes = np.bincount(labels.ravel())
 print(sizes)
 for i in range(sizes.shape[0]):
     if sizes[i] < 100:
-        labels[numpy.where(labels == i)] = 0
+        labels[np.where(labels == i)] = 0
 
 def filter_by_size(labels, minsize, maxsize):
     # Find label sizes
-    sizes = numpy.bincount(labels.ravel())
+    sizes = np.bincount(labels.ravel())
     # Iterate through labels, skipping background
     for i in range(1, sizes.shape[0]):
         # If the number of pixels falls outsize the cutoff range, relabel as background
         if sizes[i] < minsize or sizes[i] > maxsize:
             # Find all pixels for label
-            where = numpy.where(labels == i)
+            where = np.where(labels == i)
             labels[where] = 0
     # Get set of unique labels
-    ulabels = numpy.unique(labels)
+    ulabels = np.unique(labels)
     for i, j in enumerate(ulabels):
         # Relabel so labels span 1 to # of labels
-        labels[numpy.where(labels == j)] = i
+        labels[np.where(labels == j)] = i
     return labels
 
 # Let's look at the labels after filtering
-label_copy = numpy.copy(labels)
-label_copy[numpy.where(label_copy == 0)] -= 50
+label_copy = np.copy(labels)
+label_copy[np.where(label_copy == 0)] -= 50
 plt.imshow(label_copy)
 plt.show()
 
 # What if we want to select a single marked nucleus?
-marked = numpy.copy(mask).astype(numpy.int32)
-where = numpy.where(labels == 50)
+marked = np.copy(mask).astype(np.int32)
+where = np.where(labels == 50)
 marked[where] = 2
 
 # And if we want information about that nucleus in another channel?
-minv = numpy.amin(img1[where])
-maxv = numpy.amax(img1[where])
+minv = np.amin(img1[where])
+maxv = np.amax(img1[where])
 print(f"RNA nuclear signal ranges from {minv} to {maxv}")
 
 # Now let's see what a kernel is and what it does
-kernel = numpy.zeros((9, 9), numpy.float32)
+kernel = np.zeros((9, 9), np.float32)
 # Add two normal curves, one across rows, one across columns
-kernel += scipy.stats.norm.pdf(numpy.linspace(-2, 2, 9))[:, na]
-kernel *= scipy.stats.norm.pdf(numpy.linspace(-2, 2, 9))[na, :]
+kernel += scipy.stats.norm.pdf(np.linspace(-2, 2, 9))[:, na]
+kernel *= scipy.stats.norm.pdf(np.linspace(-2, 2, 9))[na, :]
 
 plt.imshow(kernel)
 plt.show()
 
 # Let's see what happens when we apply the kernel
 blurred = scipy.ndimage.convolve(img2, kernel)
-blurred -= numpy.amin(blurred)
-scores = numpy.copy(blurred.ravel())
+blurred -= np.amin(blurred)
+scores = np.copy(blurred.ravel())
 scores.sort()
-blurred = numpy.minimum(1, blurred / scores[int(0.99*scores.shape[0])])
+blurred = np.minimum(1, blurred / scores[int(0.99*scores.shape[0])])
 
 # Let's also change the dynamic range on img2
-img2 -= numpy.amin(img2)
-scores = numpy.copy(img2.ravel())
+img2 -= np.amin(img2)
+scores = np.copy(img2.ravel())
 scores.sort()
-img2 = numpy.minimum(1, img2 / scores[int(0.99*scores.shape[0])])
+img2 = np.minimum(1, img2 / scores[int(0.99*scores.shape[0])])
 
 # We need to combine the images
-combined = numpy.concatenate((img2[:, :, na], blurred[:, :, na]), axis=2)
+combined = np.concatenate((img2[:, :, na], blurred[:, :, na]), axis=2)
 
 # Now we can view them with plotly
 fig = px.imshow(combined, facet_col=2)
 fig.show()
 
 # Let's look at another kernel
-kernel = numpy.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
+kernel = np.array([[1, 0, -1], [2, 0, -2], [1, 0, -1]])
 plt.imshow(kernel, vmin=-2, vmax=2)
 plt.show()
 
@@ -243,11 +254,11 @@ filtered_y = scipy.ndimage.convolve(img, kernel.T)
 filtered = (filtered_x**2 + filtered_y**2) ** 0.5
 
 # Now let's combine the images so we do a fancy display
-fullfig = numpy.concatenate((img[:,:,na], filtered_x[:,:,na], filtered_y[:,:,na], filtered[:,:,na]), axis=2)
+fullfig = np.concatenate((img[:,:,na], filtered_x[:,:,na], filtered_y[:,:,na], filtered[:,:,na]), axis=2)
 
 # And rescale each layer independently
-fullfig -= numpy.amin(fullfig.reshape(-1, 4), axis=0)
-fullfig /= numpy.amax(fullfig.reshape(-1, 4), axis=0)
+fullfig -= np.amin(fullfig.reshape(-1, 4), axis=0)
+fullfig /= np.amax(fullfig.reshape(-1, 4), axis=0)
 
 # And finally plot them in a linked and interactive plot
 fig = px.imshow(fullfig, facet_col=2)
