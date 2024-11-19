@@ -22,7 +22,9 @@ plot_nRNA <- ggplot(dat, aes(x = gene, y = nascentRNA, fill = gene)) +
   scale_fill_manual(values = cool_colors) +
   labs(title = "Nascent RNA Signal per Nuclei from Gene Knockouts",
        y = "Mean Signal Intensity") +
-  theme_minimal()
+  theme_minimal() +
+  geom_boxplot(width = 0.1, color = "black", fill = "transparent")
+
 
 # Create violin plot for PCNA signal
 plot_PCNA <- ggplot(dat, aes(x = gene, y = PCNA, fill = gene)) +
@@ -30,7 +32,8 @@ plot_PCNA <- ggplot(dat, aes(x = gene, y = PCNA, fill = gene)) +
   scale_fill_manual(values = cool_colors) +
   labs(title = "PCNA Signal per Nuclei from Gene Knockouts",
        y = "Mean Signal Intensity") +
-  theme_minimal()
+  theme_minimal() +
+  geom_boxplot(width = 0.1, color = "black", fill = "transparent")
 
 # Create violin plot for log2 Ratio of nascent RNA/PCNA
 plot_ratio <- ggplot(dat, aes(x = gene, y = log2_nRNA_PCNA, fill = gene)) +
@@ -38,7 +41,8 @@ plot_ratio <- ggplot(dat, aes(x = gene, y = log2_nRNA_PCNA, fill = gene)) +
   scale_fill_manual(values = cool_colors) +
   labs(title = "Log2 Ratio of nascentRNA to PCNA Signal",
        y = "Log2 Transformed Ratio") +
-  theme_minimal()
+  theme_minimal() +
+  geom_boxplot(width = 0.1, color = "black", fill = "transparent")
 
 # Print the plots
 print(plot_nRNA)
